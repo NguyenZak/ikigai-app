@@ -1,0 +1,225 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Users & Authentication
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("USER") // ADMIN, MANAGER, STAFF, USER
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  news        News[]
+  sessions    Session[]
+  bookingsCreated Booking[] @relation("BookingCreatedBy")
+  bookingsUpdated Booking[] @relation("BookingUpdatedBy")
+  customersAssigned Customer[] @relation("CustomerAssignedTo")
+
+  @@map("users")
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// Content Management
+model Room {
+  id          Int      @id @default(autoincrement())
+  name        String
+  title       String
+  description String
+  beds        String
+  area        String
+  price       String
+  floor       String
+  rooms       String
+  view        String
+  slug        String   @unique // URL-friendly name
+  features    String   // JSON string
+  images      String   // JSON string
+  status      String   @default("ACTIVE") // ACTIVE, INACTIVE, DRAFT, PUBLISHED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  bookings Booking[]
+
+  @@map("rooms")
+}
+
+model ServiceZone {
+  id          Int      @id @default(autoincrement())
+  zoneId      String   @unique // e.g., "onsen", "lobby-library"
+  name        String   // Display name
+  title       String   // Page title
+  description String   // Detailed description
+  images      String   // JSON string of image URLs
+  features    String   // JSON string of features
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("service_zones")
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       String
+  category    String
+  images      String   // JSON string
+  status      String   @default("ACTIVE") // ACTIVE, INACTIVE, DRAFT, PUBLISHED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  bookingServices BookingService[]
+
+  @@map("services")
+}
+
+model News {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String
+  excerpt     String?  // SEO description
+  slug        String?  // URL-friendly title
+  metaTitle   String?  // SEO title
+  metaDescription String? // SEO meta description
+  keywords    String?  // SEO keywords
+  featuredImage String? // Featured image URL
+  authorId    Int
+  publishedAt DateTime?
+  status      String   @default("DRAFT") // DRAFT, PUBLISHED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  author User @relation(fields: [authorId], references: [id])
+
+  @@map("news")
+}
+
+model TeamMember {
+  id        Int      @id @default(autoincrement())
+  name      String
+  title     String
+  img       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("team_members")
+}
+
+// Booking System
+model Booking {
+  id              Int           @id @default(autoincrement())
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  roomId          Int
+  checkInDate     DateTime
+  checkOutDate    DateTime
+  numberOfGuests  Int
+  roomPrice       Float @default(0)
+  totalAmount     Float
+  specialRequests String?
+  status          String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED, COMPLETED
+  createdBy       Int?
+  updatedBy       Int?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  room            Room          @relation(fields: [roomId], references: [id])
+  createdByUser   User?         @relation("BookingCreatedBy", fields: [createdBy], references: [id])
+  updatedByUser   User?         @relation("BookingUpdatedBy", fields: [updatedBy], references: [id])
+  bookingServices BookingService[]
+
+  @@map("bookings")
+}
+
+model BookingService {
+  id        Int      @id @default(autoincrement())
+  bookingId Int
+  serviceId Int
+  quantity  Int      @default(1)
+  price     String
+  createdAt DateTime @default(now())
+
+  // Relations
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id])
+
+  @@map("booking_services")
+}
+
+// Settings & Configuration
+model SiteSetting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+  type  String @default("string") // string, number, boolean, json
+}
+
+model Customer {
+  id                Int             @id @default(autoincrement())
+  name              String
+  phone             String
+  email             String?
+  province          String?
+  provinceName      String?
+  ward              String?
+  wardName          String?
+  source            String          @default("WEBSITE") // WEBSITE, ADMIN, BOOKING
+  status            String          @default("NEW") // NEW, CONTACTED, CONVERTED, LOST, ARCHIVED
+  processingStatus  String          @default("PENDING") // PENDING, IN_PROGRESS, FOLLOW_UP, RESOLVED, CLOSED
+  notes             String?
+  assignedTo        Int?            // ID của user được assign
+  lastContactDate   DateTime?       // Ngày liên hệ cuối cùng
+  nextFollowUpDate  DateTime?       // Ngày follow-up tiếp theo
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  // Relations
+  assignedUser      User?           @relation("CustomerAssignedTo", fields: [assignedTo], references: [id])
+
+  @@map("customers")
+}
+
+model Banner {
+  id          Int      @id @default(autoincrement())
+  title       String
+  subtitle    String?  // For subtitle/description
+  image       String
+  overlay     String?  // For overlay gradient classes
+  statistics  String?  // JSON string for statistics
+  link        String?  // For optional link
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

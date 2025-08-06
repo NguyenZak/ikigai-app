@@ -1,0 +1,21 @@
+{
+  "name": "IKIGAIVILLA - Trung Tâm Phức Hợp Nghỉ Dưỡng",
+  "short_name": "IKIGAIVILLA",
+  "description": "Trung tâm phức hợp nghỉ dưỡng đẳng cấp 5 sao tại Việt Nam",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f7f2",
+  "theme_color": "#d11e0f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["travel", "lifestyle", "business"],
+  "lang": "vi",
+  "dir": "ltr"
+} 
