@@ -1,1 +1,1 @@
-web: npm run build && npx prisma generate && npm run start
+web: npm start --omit=dev 
