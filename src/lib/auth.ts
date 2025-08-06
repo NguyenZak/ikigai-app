@@ -95,3 +95,18 @@ export async function verifyAuth(request: Request): Promise<{ success: boolean; 
     return { success: false };
   }
 } 
+
+export function getAuthHeaders(): HeadersInit {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('auth-token');
+    if (token) {
+      return {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      };
+    }
+  }
+  return {
+    'Content-Type': 'application/json',
+  };
+} 

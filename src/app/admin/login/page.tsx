@@ -31,6 +31,11 @@ export default function AdminLogin() {
         throw new Error(data.error || 'Login failed');
       }
 
+      // Save token to localStorage
+      if (data.token) {
+        localStorage.setItem('auth-token', data.token);
+      }
+
       // Redirect to admin dashboard
       router.push('/admin/dashboard');
     } catch (err) {

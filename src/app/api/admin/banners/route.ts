@@ -11,7 +11,16 @@ export async function GET(request: NextRequest) {
       console.log('Development mode: Skipping authentication check');
     } else {
       console.log('Production mode: Validating session');
-      const token = request.cookies.get('auth-token')?.value;
+      
+      // Try to get token from cookie first, then from Authorization header
+      let token = request.cookies.get('auth-token')?.value;
+      
+      if (!token) {
+        const authHeader = request.headers.get('authorization');
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          token = authHeader.substring(7);
+        }
+      }
 
       if (!token) {
         console.log('No auth token found');
