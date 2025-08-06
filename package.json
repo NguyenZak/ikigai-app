@@ -2,14 +2,14 @@
   "name": "ikigaivilla.vn",
   "version": "0.1.0",
   "engines": {
-    "node": ">=22.11"
+    "node": ">=18.0.0"
   },
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && prisma migrate deploy && next build",
     "build2": "prisma generate && prisma migrate deploy && next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "export": "next build && next export",
     "seed": "node scripts/seed.js",
     "setup-db": "node scripts/setup-database.js",
