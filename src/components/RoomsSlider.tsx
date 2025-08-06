@@ -137,8 +137,8 @@ export default function RoomsSlider() {
 
         {/* Rooms Slider */}
         <div className={`relative transition-all duration-1000 ease-out delay-300 transform ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
+          isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        }`} style={{ willChange: 'transform, opacity' }}>
           {/* Navigation Buttons */}
           {!loading && roomsData.length > 4 && (
             <>
@@ -164,25 +164,12 @@ export default function RoomsSlider() {
             {loading ? (
               // Loading skeleton
               Array.from({ length: 4 }).map((_, index) => (
-                <article 
-                  key={`room-skeleton-${index}`}
-                  className="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse"
-                >
+                <article key={`loading-${index}`} className="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
                   <div className="relative aspect-square bg-gray-200"></div>
                   <div className="p-6">
-                    <div className="h-4 bg-gray-200 rounded mb-3"></div>
-                    <div className="h-3 bg-gray-200 rounded mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded mb-4"></div>
-                    <div className="grid grid-cols-2 gap-2 mb-4">
-                      <div className="h-3 bg-gray-200 rounded"></div>
-                      <div className="h-3 bg-gray-200 rounded"></div>
-                      <div className="h-3 bg-gray-200 rounded"></div>
-                      <div className="h-3 bg-gray-200 rounded"></div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="h-3 bg-gray-200 rounded w-16"></div>
-                      <div className="h-3 bg-gray-200 rounded w-20"></div>
-                    </div>
+                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-16"></div>
+                    <div className="h-3 bg-gray-200 rounded w-20"></div>
                   </div>
                 </article>
               ))
@@ -194,12 +181,12 @@ export default function RoomsSlider() {
               return (
                 <article 
                   key={`room-slider-${room.id}-${currentIndex}-${index}`} 
-                  className={`bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-opacity duration-800 ease-out hover:-translate-y-2 ${
-                    isVisible ? 'opacity-100' : 'opacity-0'
+                  className={`bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-800 ease-out transform hover:-translate-y-2 ${
+                    isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
                   }`}
                   style={{ 
                     transitionDelay: `${0.5 + index * 0.2}s`,
-                    willChange: 'opacity'
+                    willChange: 'transform, opacity'
                   }}
                 >
                   <div className="relative aspect-square">
@@ -269,11 +256,11 @@ export default function RoomsSlider() {
         </div>
 
         {/* View All Button */}
-        <div className={`text-center mt-12 transition-opacity duration-800 ease-out ${
-          isVisible ? 'opacity-100' : 'opacity-0'
+        <div className={`text-center mt-12 transition-all duration-800 ease-out transform ${
+          isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`} style={{ 
           transitionDelay: '1.3s',
-          willChange: 'opacity'
+          willChange: 'transform, opacity'
         }}>
           <button 
             onClick={() => router.push('/rooms')}

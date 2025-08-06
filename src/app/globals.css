@@ -60,6 +60,16 @@ body {
     backface-visibility: hidden;
   }
   
+  /* Optimize transform animations for Safari */
+  .transition-all {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+    perspective: 1000px;
+  }
+  
   /* Improve text clarity on Safari */
   .text-4xl, .text-5xl, .text-3xl, .text-2xl, .text-xl {
     -webkit-font-smoothing: antialiased;

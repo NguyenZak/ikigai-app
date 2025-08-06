@@ -184,8 +184,8 @@ export default function ServicesSlider() {
       <div className="max-w-[1440px] mx-auto">
         {/* Section Header */}
         <div className={`text-center mb-16 transition-all duration-1000 ease-out transform ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
+          isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        }`} style={{ willChange: 'transform, opacity' }}>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
             Tiện Ích Đặc Quyền
           </h2>
@@ -196,8 +196,8 @@ export default function ServicesSlider() {
 
         {/* Services Slider */}
         <div className={`relative transition-all duration-1000 ease-out delay-300 transform ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
+          isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        }`} style={{ willChange: 'transform, opacity' }}>
           {/* Navigation Buttons */}
           <button
             onClick={prevSlide}
@@ -223,12 +223,12 @@ export default function ServicesSlider() {
               return (
                 <article 
                   key={service.id} 
-                  className={`bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-opacity duration-800 ease-out hover:-translate-y-2 ${
-                    isVisible ? 'opacity-100' : 'opacity-0'
+                  className={`bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-800 ease-out transform hover:-translate-y-2 ${
+                    isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
                   }`}
                   style={{ 
                     transitionDelay: `${0.5 + index * 0.2}s`,
-                    willChange: 'opacity'
+                    willChange: 'transform, opacity'
                   }}
                 >
                   <div className="relative h-48">
@@ -345,11 +345,11 @@ export default function ServicesSlider() {
         </div>
 
         {/* View All Button */}
-        <div className={`text-center mt-12 transition-opacity duration-800 ease-out ${
-          isVisible ? 'opacity-100' : 'opacity-0'
+        <div className={`text-center mt-12 transition-all duration-800 ease-out transform ${
+          isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`} style={{ 
           transitionDelay: '1.3s',
-          willChange: 'opacity'
+          willChange: 'transform, opacity'
         }}>
           <button 
             onClick={() => router.push('/services')}
