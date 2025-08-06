@@ -189,9 +189,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           </div>
         </div>
       )}
-      <div className={`bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto transition-all duration-300 transform ${
-        isModalVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-      }`}>
+      <div className={`bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto transition-opacity duration-300 ${
+        isModalVisible ? 'opacity-100' : 'opacity-0'
+      }`} style={{ willChange: 'opacity' }}>
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-200">
           <h2 className="text-xl font-bold text-gray-800">Đặt lịch tư vấn</h2>

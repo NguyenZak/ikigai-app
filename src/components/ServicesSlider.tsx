@@ -223,10 +223,13 @@ export default function ServicesSlider() {
               return (
                 <article 
                   key={service.id} 
-                  className={`bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-800 ease-out transform hover:-translate-y-2 ${
-                    isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
+                  className={`bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-opacity duration-800 ease-out hover:-translate-y-2 ${
+                    isVisible ? 'opacity-100' : 'opacity-0'
                   }`}
-                  style={{ transitionDelay: `${0.5 + index * 0.2}s` }}
+                  style={{ 
+                    transitionDelay: `${0.5 + index * 0.2}s`,
+                    willChange: 'opacity'
+                  }}
                 >
                   <div className="relative h-48">
                     <Image
@@ -342,9 +345,12 @@ export default function ServicesSlider() {
         </div>
 
         {/* View All Button */}
-        <div className={`text-center mt-12 transition-all duration-800 ease-out transform ${
-          isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
-        }`} style={{ transitionDelay: '1.3s' }}>
+        <div className={`text-center mt-12 transition-opacity duration-800 ease-out ${
+          isVisible ? 'opacity-100' : 'opacity-0'
+        }`} style={{ 
+          transitionDelay: '1.3s',
+          willChange: 'opacity'
+        }}>
           <button 
             onClick={() => router.push('/services')}
             className="bg-[#d11e0f] text-white px-8 py-4 rounded-full font-semibold hover:bg-[#b01a0d] transition-colors duration-300 hover:scale-105"

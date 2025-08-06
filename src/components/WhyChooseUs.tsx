@@ -60,27 +60,36 @@ export default function WhyChooseUs() {
   return (
     <section ref={sectionRef} className="py-20 bg-white">
       <div className="max-w-[1440px] mx-auto px-4">
-        <div className={`text-center mb-10 transition-all duration-1000 ease-out transform ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
+        <div 
+          className={`text-center mb-10 transition-opacity duration-1000 ease-out ${
+            isVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{ willChange: 'opacity' }}
+        >
           <div className="text-[#d11e0f] font-semibold mb-2 text-lg">Tại sao chọn chúng tôi?</div>
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Tại sao chọn chúng tôi?</h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg font-excalifont">
             Ikigai – trong tiếng Nhật – là lý do để ta muốn thức dậy vào buổi sáng. <br /> Là điều khiến trái tim vẫn còn đập không chỉ vì nó phải, mà vì nó muốn.
           </p>
         </div>
-        <div className={`grid md:grid-cols-3 gap-8 items-stretch transition-all duration-1000 ease-out delay-300 transform ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
+        <div 
+          className={`grid md:grid-cols-3 gap-8 items-stretch transition-opacity duration-1000 ease-out delay-300 ${
+            isVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{ willChange: 'opacity' }}
+        >
           {/* Left: 4 cards */}
           <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-8">
             {reasons.map((r, i) => (
               <div 
                 key={`reason-${i}`} 
-                className={`bg-white rounded-2xl shadow-lg p-6 flex flex-col items-start h-full transition-all duration-800 ease-out transform ${
-                  isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
+                className={`bg-white rounded-2xl shadow-lg p-6 flex flex-col items-start h-full transition-all duration-800 ease-out ${
+                  isVisible ? 'opacity-100' : 'opacity-0'
                 }`}
-                style={{ transitionDelay: `${0.5 + i * 0.2}s` }}
+                style={{ 
+                  transitionDelay: `${0.5 + i * 0.2}s`,
+                  willChange: 'opacity'
+                }}
               >
                 <div className="mb-4">
                   <FontAwesomeIcon icon={r.icon} className="w-8 h-8 text-[#d11e0f]" />
@@ -91,9 +100,15 @@ export default function WhyChooseUs() {
             ))}
           </div>
           {/* Right: Image */}
-          <div className={`flex items-center justify-center transition-all duration-800 ease-out transform ${
-            isVisible ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 translate-x-8 scale-95'
-          }`} style={{ transitionDelay: '1.3s' }}>
+          <div 
+            className={`flex items-center justify-center transition-opacity duration-800 ease-out ${
+              isVisible ? 'opacity-100' : 'opacity-0'
+            }`} 
+            style={{ 
+              transitionDelay: '1.3s',
+              willChange: 'opacity'
+            }}
+          >
             <div className="w-full h-full rounded-2xl overflow-hidden shadow-lg min-h-[300px]">
               <Image
                 src="/images/ONSEN 10_4.png"
