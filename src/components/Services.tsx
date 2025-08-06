@@ -239,32 +239,49 @@ export default function Services() {
                   photoClosable={true}
                 >
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {currentZone.images.map((image, index) => (
-                      <PhotoView key={`service-image-${index}`} src={image}>
-                        <div
-                          className={`relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer ${
-                            index === 0 ? 'col-span-2 row-span-2' : ''
-                          }`}
-                        >
-                          <div className={`relative ${index === 0 ? 'h-96' : 'h-48'}`}>
-                            <Image
-                              src={image}
-                              alt={`${currentZone.title} ${index + 1}`}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                          {/* Overlay with zoom icon */}
-                          <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-                            <div className="opacity-0 hover:opacity-100 transition-opacity duration-300">
-                              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                              </svg>
+                    {currentZone.images && currentZone.images.length > 0 ? (
+                      currentZone.images.map((image, index) => (
+                        <PhotoView key={`service-image-${index}`} src={image}>
+                          <div
+                            className={`relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer ${
+                              index === 0 ? 'col-span-2 row-span-2' : ''
+                            }`}
+                          >
+                            <div className={`relative ${index === 0 ? 'h-96' : 'h-48'}`}>
+                              <Image
+                                src={image}
+                                alt={`${currentZone.title} ${index + 1}`}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            {/* Overlay with zoom icon */}
+                            <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                              <div className="opacity-0 hover:opacity-100 transition-opacity duration-300">
+                                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                </svg>
+                              </div>
                             </div>
                           </div>
+                        </PhotoView>
+                      ))
+                    ) : (
+                      // Fallback image if no images are available
+                      <div className="col-span-2 row-span-2 relative overflow-hidden rounded-xl shadow-lg">
+                        <div className="relative h-96">
+                          <Image
+                            src="/images/placeholder.jpg"
+                            alt={`${currentZone.title} placeholder`}
+                            fill
+                            className="object-cover"
+                          />
                         </div>
-                      </PhotoView>
-                    ))}
+                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                          <p className="text-white text-lg font-medium">Không có hình ảnh</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </PhotoProvider>
               </div>

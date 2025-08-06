@@ -4,6 +4,7 @@ import Image from 'next/image';
 
 interface ImageUploadProps {
   onUpload: (url: string) => void;
+  onMultipleUpload?: (urls: string[]) => void;
   type?: 'rooms' | 'news' | 'services' | 'general';
   className?: string;
   multiple?: boolean;
@@ -24,6 +25,7 @@ interface UploadedFile {
 
 export default function ImageUpload({ 
   onUpload, 
+  onMultipleUpload,
   type = 'general', 
   className = '',
   multiple = false,
@@ -71,7 +73,12 @@ export default function ImageUpload({
       
       if (multiple) {
         setUploadedFiles(prev => [...prev, ...uploadedFiles]);
-        uploadedFiles.forEach(file => onUpload(file.url));
+        const urls = uploadedFiles.map(file => file.url);
+        if (onMultipleUpload) {
+          onMultipleUpload(urls);
+        } else {
+          uploadedFiles.forEach(file => onUpload(file.url));
+        }
       } else {
         setUploadedFiles(uploadedFiles);
         onUpload(uploadedFiles[0].url);

@@ -142,6 +142,13 @@ export default function ServiceZonesPage() {
     }));
   };
 
+  const handleMultipleImageUpload = (imageUrls: string[]) => {
+    setFormData(prev => ({
+      ...prev,
+      images: [...prev.images, ...imageUrls]
+    }));
+  };
+
   const removeImage = (index: number) => {
     setFormData(prev => ({
       ...prev,
@@ -389,30 +396,56 @@ export default function ServiceZonesPage() {
                 {/* Images */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Hình ảnh
+                    Hình ảnh (có thể upload nhiều ảnh cùng lúc)
                   </label>
-                  <ImageUpload onUpload={handleImageUpload} />
+                  <ImageUpload 
+                    onUpload={handleImageUpload}
+                    onMultipleUpload={handleMultipleImageUpload}
+                    multiple={true}
+                    maxFiles={10}
+                    type="services"
+                  />
                   {Array.isArray(formData.images) && formData.images.length > 0 && (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-                      {formData.images.map((image, index) => (
-                        <div key={`service-zone-image-${index}`} className="relative group">
-                          <Image
-                            src={image}
-                            alt={`Image ${index + 1}`}
-                            className="w-full h-32 object-cover rounded-lg"
-                            width={300}
-                            height={128}
-                            sizes="(max-width: 768px) 50vw, 25vw"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
+                    <div className="mt-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-gray-700">
+                          Hình ảnh đã chọn ({formData.images.length})
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, images: [] }))}
+                          className="text-sm text-red-600 hover:text-red-800 font-medium"
+                        >
+                          Xóa tất cả
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {formData.images.map((image, index) => (
+                          <div key={`service-zone-image-${index}`} className="relative group">
+                            <Image
+                              src={image}
+                              alt={`Image ${index + 1}`}
+                              className="w-full h-32 object-cover rounded-lg"
+                              width={300}
+                              height={128}
+                              sizes="(max-width: 768px) 50vw, 25vw"
+                            />
+                            <div className="absolute top-2 right-2 flex space-x-1">
+                              <button
+                                type="button"
+                                onClick={() => removeImage(index)}
+                                className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+                                title="Xóa ảnh"
+                              >
+                                ×
+                              </button>
+                            </div>
+                            <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                              {index + 1}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
