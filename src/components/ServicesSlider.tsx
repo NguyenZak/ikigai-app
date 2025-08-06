@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 
@@ -14,13 +14,55 @@ interface ServiceItem {
   features: string[];
 }
 
+interface ServiceZone {
+  id: number;
+  zoneId: string;
+  name: string;
+  title: string;
+  description: string;
+  images: string[];
+  features: string[];
+  order: number;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+
+
 export default function ServicesSlider() {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
   const [isClient, setIsClient] = useState(false);
+  const [serviceZones, setServiceZones] = useState<ServiceZone[]>([]);
+  const [loading, setLoading] = useState(true);
   const sectionRef = useRef<HTMLElement>(null);
+
+  const fetchServiceZones = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/service-zones');
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch service zones: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.serviceZones && data.serviceZones.length > 0) {
+        setServiceZones(data.serviceZones);
+      } else {
+        setServiceZones([]);
+      }
+    } catch (error) {
+      console.error('Error fetching service zones:', error);
+      setServiceZones([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     setIsClient(true);
@@ -33,6 +75,11 @@ export default function ServicesSlider() {
     
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    setIsVisible(true);
+    fetchServiceZones();
+  }, [fetchServiceZones]);
 
   // Intersection Observer cho animation
   useEffect(() => {
@@ -60,64 +107,18 @@ export default function ServicesSlider() {
     };
   }, []);
 
-  const servicesData: ServiceItem[] = [
-    {
-      id: "onsen",
-      name: "Khu Onsen Ngoài Trời",
-      title: "Khu Onsen Ngoài Trời",
-      description: "Trải nghiệm tắm khoáng nóng ngoài trời chuẩn Nhật Bản, thư giãn giữa thiên nhiên, giúp phục hồi năng lượng và cân bằng cơ thể.",
-      image: "/banner/ONSEN 10_4.png",
-      category: "Spa & Wellness",
-      features: [
-        "Nước khoáng nóng tự nhiên",
-        "Không gian ngoài trời xanh mát",
-        "Bồn tắm khoáng, phòng xông hơi",
-        "Dịch vụ spa thư giãn"
-      ]
-    },
-    {
-      id: "lobby-library",
-      name: "Sảnh Lễ Tân & Thư Viện",
-      title: "Sảnh Lễ Tân & Thư Viện",
-      description: "Không gian đón tiếp sang trọng, kết hợp thư viện yên tĩnh với hàng ngàn đầu sách, lý tưởng cho việc đọc sách, làm việc và thư giãn.",
-      image: "/banner/THU VIEN 8_4.png",
-      category: "Tiện ích",
-      features: [
-        "Sảnh lễ tân sang trọng",
-        "Thư viện với hơn 10,000 đầu sách",
-        "Không gian làm việc chung",
-        "Cà phê và trà miễn phí"
-      ]
-    },
-    {
-      id: "restaurant",
-      name: "Khu Vực Nhà Hàng",
-      title: "Khu Vực Nhà Hàng",
-      description: "Nhà hàng phục vụ ẩm thực đa dạng, không gian ấm cúng, thực đơn phong phú từ món Việt đến món Âu, nguyên liệu tươi ngon mỗi ngày.",
-      image: "/banner/CONG CHINH 2_3.png",
-      category: "Ẩm thực",
-      features: [
-        "Ẩm thực Việt & Quốc tế",
-        "Không gian riêng tư & chung",
-        "Nguyên liệu hữu cơ, tươi mới",
-        "Phục vụ chuyên nghiệp"
-      ]
-    },
-    {
-      id: "wellness",
-      name: "Chăm Sóc Sức Khoẻ & Vật Lý Trị Liệu",
-      title: "Chăm Sóc Sức Khoẻ & Vật Lý Trị Liệu",
-      description: "Dịch vụ chăm sóc sức khoẻ toàn diện: massage, vật lý trị liệu, yoga, thiền, giúp phục hồi thể chất và tinh thần.",
-      image: "/banner/CONG PHU 4_4.png",
-      category: "Spa & Wellness",
-      features: [
-        "Massage trị liệu chuyên sâu",
-        "Phòng tập yoga & thiền",
-        "Chuyên gia vật lý trị liệu",
-        "Không gian yên tĩnh, riêng tư"
-      ]
-    }
-  ];
+  // Convert ServiceZone to ServiceItem format for the slider
+  const servicesData: ServiceItem[] = serviceZones.map(zone => ({
+    id: zone.zoneId,
+    name: zone.name,
+    title: zone.title,
+    description: zone.description,
+    image: zone.images[0] || "/banner/ONSEN 10_4.png", // Use first image or fallback
+    category: "Tiện ích",
+    features: zone.features
+  }));
+
+
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => {
@@ -143,6 +144,23 @@ export default function ServicesSlider() {
     }
     return visibleServices;
   };
+
+  if (loading) {
+    return (
+      <section className="py-20 px-4 bg-gradient-to-b from-white to-[#f8f7f2]">
+        <div className="max-w-[1440px] mx-auto">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d11e0f] mx-auto"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Don't render if no service zones
+  if (serviceZones.length === 0) {
+    return null;
+  }
 
   return (
     <section ref={sectionRef} className="py-20 px-4 bg-gradient-to-b from-white to-[#f8f7f2]">
