@@ -34,7 +34,7 @@ export default function BannersPage() {
       const response = await fetch('/api/admin/banners');
       if (response.ok) {
         const data = await response.json();
-        setBanners(data);
+        setBanners(data.banners || []);
       }
     } catch (error) {
       console.error('Error fetching banners:', error);
