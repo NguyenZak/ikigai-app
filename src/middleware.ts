@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  // Allow access to login page without authentication
-  if (request.nextUrl.pathname === '/admin/login') {
+  // Allow access to login page and auth APIs without authentication
+  if (request.nextUrl.pathname === '/admin/login' || 
+      request.nextUrl.pathname.startsWith('/api/auth/')) {
     return NextResponse.next()
   }
 
