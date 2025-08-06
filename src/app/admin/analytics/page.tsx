@@ -53,7 +53,25 @@ export default function AnalyticsPage() {
           throw new Error('Failed to fetch analytics');
         }
         const data = await response.json();
-        setAnalytics(data);
+        if (data.success && data.data) {
+          // Transform API data to match frontend interface
+          const transformedData: AnalyticsData = {
+            totalRooms: data.data.totalRooms,
+            activeRooms: data.data.totalRooms, // Assuming all rooms are active
+            totalBookings: data.data.todayBookings + data.data.pendingBookings, // Approximate
+            pendingBookings: data.data.pendingBookings,
+            totalRevenue: 0, // Not available in API
+            monthlyBookings: [], // Not available in API
+            popularRooms: data.data.topRooms.map((room: any) => ({
+              roomName: room.roomName,
+              bookings: room._count.id
+            })),
+            recentActivity: [] // Not available in API
+          };
+          setAnalytics(transformedData);
+        } else {
+          throw new Error('Invalid data format');
+        }
       } catch (error) {
         setError('Failed to load analytics');
         console.error('Error fetching analytics:', error);
