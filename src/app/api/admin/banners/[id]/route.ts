@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { validateSession } from '@/lib/auth';
+import { verifyAuth } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,17 +9,10 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    //Logf
     console.log('PUT request to update banner');
-    const token = request.cookies.get('auth-token')?.value;
-
-    if (!token) {
+    const authResult = await verifyAuth(request);
+    if (!authResult.success) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const user = await validateSession(token);
-    if (!user || user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const { id: idStr } = await params;
@@ -56,7 +49,7 @@ export async function PUT(
       }
     });
 
-    return NextResponse.json(banner);
+    return NextResponse.json({ banner });
   } catch (error) {
     console.error('Error updating banner:', error);
     return NextResponse.json(
@@ -71,16 +64,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // const token = request.cookies.get('auth-token')?.value;
-    //
-    // if (!token) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
-    //
-    // const user = await validateSession(token);
-    // if (!user || user.role !== 'ADMIN') {
-    //   return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    // }
+    const authResult = await verifyAuth(request);
+    if (!authResult.success) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const { id: idStr } = await params;
     const id = parseInt(idStr);

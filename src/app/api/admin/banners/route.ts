@@ -1,44 +1,14 @@
-export const dynamic = 'force-static'
+export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { validateSession } from '@/lib/auth';
+import { verifyAuth } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
-    // For development, allow access without auth
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Development mode: Skipping authentication check');
-    } else {
-      console.log('Production mode: Validating session');
-      
-      // Try to get token from cookie first, then from Authorization header
-      let token = request.cookies.get('auth-token')?.value;
-      
-      if (!token) {
-        const authHeader = request.headers.get('authorization');
-        if (authHeader && authHeader.startsWith('Bearer ')) {
-          token = authHeader.substring(7);
-        }
-      }
-
-      if (!token) {
-        console.log('No auth token found');
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-
-      const user = await validateSession(token);
-      if (!user) {
-        console.log('Invalid session');
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-      
-      if (user.role !== 'ADMIN') {
-        console.log('User not admin:', user.role);
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-      }
-      
-      console.log('User authenticated:', user.email);
+    const authResult = await verifyAuth(request);
+    if (!authResult.success) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const banners = await prisma.banner.findMany({
@@ -63,7 +33,7 @@ export async function GET(request: NextRequest) {
       active: banner.active
     }));
 
-    return NextResponse.json(transformedBanners);
+    return NextResponse.json({ banners: transformedBanners });
   } catch (error) {
     console.error('Error fetching banners:', error);
     return NextResponse.json(
@@ -75,29 +45,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // For development, allow access without auth
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Development mode: Skipping authentication check');
-    } else {
-      const token = request.cookies.get('auth-token')?.value;
-      
-      if (!token) {
-        console.log('No auth token found');
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-
-      const user = await validateSession(token);
-      if (!user) {
-        console.log('Invalid session');
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-      
-      if (user.role !== 'ADMIN') {
-        console.log('User not admin:', user.role);
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-      }
-      
-      console.log('User authenticated:', user.email);
+    const authResult = await verifyAuth(request);
+    if (!authResult.success) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -124,7 +74,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json(banner, { status: 201 });
+    return NextResponse.json({ banner }, { status: 201 });
   } catch (error) {
     console.error('Error creating banner:', error);
     return NextResponse.json(
