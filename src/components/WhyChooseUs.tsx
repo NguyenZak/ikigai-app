@@ -62,19 +62,19 @@ export default function WhyChooseUs() {
       <div className="max-w-[1440px] mx-auto px-4">
         <div 
           className={`text-center mb-10 transition-all duration-1000 ease-out transform ${
-            isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
           style={{ willChange: 'transform, opacity' }}
         >
           <div className="text-[#d11e0f] font-semibold mb-2 text-lg">Tại sao chọn chúng tôi?</div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Tại sao chọn chúng tôi?</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">Tại sao chọn chúng tôi?</h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg font-excalifont">
             Ikigai – trong tiếng Nhật – là lý do để ta muốn thức dậy vào buổi sáng. <br /> Là điều khiến trái tim vẫn còn đập không chỉ vì nó phải, mà vì nó muốn.
           </p>
         </div>
         <div 
           className={`grid md:grid-cols-3 gap-8 items-stretch transition-all duration-1000 ease-out delay-300 transform ${
-            isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
           style={{ willChange: 'transform, opacity' }}
         >
@@ -84,7 +84,7 @@ export default function WhyChooseUs() {
               <div 
                 key={`reason-${i}`} 
                 className={`bg-white rounded-2xl shadow-lg p-6 flex flex-col items-start h-full transition-all duration-800 ease-out transform ${
-                  isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                  isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
                 }`}
                 style={{ 
                   transitionDelay: `${0.5 + i * 0.2}s`,
@@ -94,7 +94,7 @@ export default function WhyChooseUs() {
                 <div className="mb-4">
                   <FontAwesomeIcon icon={r.icon} className="w-8 h-8 text-[#d11e0f]" />
                 </div>
-                <div className="font-bold text-xl mb-2">{r.title}</div>
+                <div className="font-bold text-gray-800 text-xl mb-2">{r.title}</div>
                 <div className="text-gray-600">{r.desc}</div>
               </div>
             ))}
@@ -102,7 +102,7 @@ export default function WhyChooseUs() {
           {/* Right: Image */}
           <div 
             className={`flex items-center justify-center transition-all duration-800 ease-out transform ${
-              isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+              isVisible ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 translate-x-8 scale-95'
             }`} 
             style={{ 
               transitionDelay: '1.3s',

@@ -175,16 +175,16 @@ export default function OurTeam() {
     <section ref={sectionRef} className="py-20 bg-[#f8f7f2]">
       <div className="max-w-[1440px] mx-auto px-4">
         <div className={`text-center mb-10 transition-all duration-1000 ease-out transform ${
-          isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`} style={{ willChange: 'transform, opacity' }}>
           <div className="text-[#d11e0f] font-semibold mb-2 text-lg">Đội ngũ của chúng tôi</div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Đội ngũ của chúng tôi</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">Đội ngũ của chúng tôi</h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             Đội ngũ chuyên gia tận tâm, giàu kinh nghiệm luôn đồng hành cùng khách hàng trên hành trình sống khỏe mạnh và ý nghĩa.
           </p>
         </div>
         <div className={`relative mb-10 transition-all duration-1000 ease-out delay-300 transform ${
-          isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`} style={{ willChange: 'transform, opacity' }}>
           {/* Slider */}
           <div className="flex overflow-x-hidden">
@@ -192,14 +192,14 @@ export default function OurTeam() {
               <div 
                 key={`team-member-${member.id}-${current}-${i}`} 
                 className={`bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col items-center mx-2 min-w-0 w-full mb-10 transition-all duration-800 ease-out transform ${
-                  isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                  isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
                 }`}
                 style={{ 
                   transitionDelay: `${0.5 + i * 0.2}s`,
                   willChange: 'transform, opacity'
                 }}
               >
-                <div className="w-full aspect-[3/4] bg-gray-100">
+                <div className="w-full aspect-[3/4] bg-gray-100 text-gray-800">
                   <Image
                     src={member.img || "/images/placeholder.jpg"}
                     alt={member.name}

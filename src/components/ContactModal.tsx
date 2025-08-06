@@ -218,7 +218,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d11e0f] focus:border-transparent"
+              className="w-full text-gray-800 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d11e0f] focus:border-transparent"
               placeholder="Nhập họ và tên"
             />
           </div>
@@ -234,7 +234,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               value={formData.phone}
               onChange={handleChange}
               required
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#d11e0f] focus:border-transparent ${
+              className={`w-full text-gray-800 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#d11e0f] focus:border-transparent ${
                 phoneError ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="Nhập số điện thoại"
@@ -254,7 +254,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               value={formData.province}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d11e0f] focus:border-transparent bg-white"
+              className="w-full px-3 text-gray-800 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d11e0f] focus:border-transparent bg-white"
             >
               <option value="">Chọn tỉnh/thành phố</option>
               {isLoadingProvinces ? (
@@ -283,7 +283,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               onChange={handleChange}
               required
               disabled={!formData.province}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#d11e0f] focus:border-transparent ${
+              className={`w-full px-3 py-2 border text-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d11e0f] focus:border-transparent ${
                 !formData.province ? 'bg-gray-100 cursor-not-allowed' : 'bg-white border-gray-300'
               }`}
             >
