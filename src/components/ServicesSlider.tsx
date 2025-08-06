@@ -9,7 +9,7 @@ interface ServiceItem {
   name: string;
   title: string;
   description: string;
-  image: string;
+  images: string[];
   category: string;
   features: string[];
 }
@@ -28,8 +28,6 @@ interface ServiceZone {
   updatedAt: string;
 }
 
-
-
 export default function ServicesSlider() {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -38,6 +36,7 @@ export default function ServicesSlider() {
   const [isClient, setIsClient] = useState(false);
   const [serviceZones, setServiceZones] = useState<ServiceZone[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({});
   const sectionRef = useRef<HTMLElement>(null);
 
   const fetchServiceZones = useCallback(async () => {
@@ -53,6 +52,12 @@ export default function ServicesSlider() {
       
       if (data.serviceZones && data.serviceZones.length > 0) {
         setServiceZones(data.serviceZones);
+        // Initialize image indices for each service
+        const initialIndices: { [key: string]: number } = {};
+        data.serviceZones.forEach((zone: ServiceZone) => {
+          initialIndices[zone.zoneId] = 0;
+        });
+        setImageIndices(initialIndices);
       } else {
         setServiceZones([]);
       }
@@ -113,12 +118,10 @@ export default function ServicesSlider() {
     name: zone.name,
     title: zone.title,
     description: zone.description,
-    image: zone.images[0] || "/banner/ONSEN 10_4.png", // Use first image or fallback
+    images: zone.images.length > 0 ? zone.images : ["/banner/ONSEN 10_4.png"], // Use all images or fallback
     category: "Tiện ích",
     features: zone.features
   }));
-
-
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => {
@@ -131,6 +134,20 @@ export default function ServicesSlider() {
       const cardsToShow = isClient ? (windowWidth < 768 ? 1 : windowWidth < 1024 ? 2 : 4) : 1;
       return prevIndex === 0 ? Math.max(0, servicesData.length - cardsToShow) : prevIndex - 1;
     });
+  };
+
+  const nextImage = (serviceId: string, totalImages: number) => {
+    setImageIndices(prev => ({
+      ...prev,
+      [serviceId]: (prev[serviceId] || 0 + 1) % totalImages
+    }));
+  };
+
+  const prevImage = (serviceId: string, totalImages: number) => {
+    setImageIndices(prev => ({
+      ...prev,
+      [serviceId]: prev[serviceId] === 0 ? totalImages - 1 : (prev[serviceId] || 0) - 1
+    }));
   };
 
   const getVisibleServices = () => {
@@ -199,65 +216,128 @@ export default function ServicesSlider() {
 
           {/* Services Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:px-8">
-            {getVisibleServices().map((service, index) => (
-              <article 
-                key={service.id} 
-                className={`bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-800 ease-out transform hover:-translate-y-2 ${
-                  isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
-                }`}
-                style={{ transitionDelay: `${0.5 + index * 0.2}s` }}
-              >
-                <div className="relative h-48">
-                  <Image
-                    src={service.image}
-                    alt={service.title}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-[#d11e0f] text-white px-3 py-1 rounded-full text-sm font-semibold">
-                      {service.category}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 
-                    className="text-lg font-bold text-gray-800 mb-3 line-clamp-2 cursor-pointer hover:text-[#d11e0f] transition-colors"
-                    onClick={() => router.push(`/services?zone=${service.id}`)}
-                  >
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                    {service.description}
-                  </p>
-                  
-                  {/* Service Features */}
-                  <div className="space-y-2 mb-4">
-                    {service.features.slice(0, 2).map((feature, idx) => (
-                      <div key={`service-feature-${idx}`} className="flex items-start space-x-2">
-                        <div className="w-1.5 h-1.5 bg-[#d11e0f] rounded-full mt-2 flex-shrink-0"></div>
-                        <span className="text-gray-600 text-xs line-clamp-1">{feature}</span>
-                      </div>
-                    ))}
-                    {service.features.length > 2 && (
-                      <div className="text-xs text-gray-500">
-                        +{service.features.length - 2} tiện ích khác
-                      </div>
+            {getVisibleServices().map((service, index) => {
+              const currentImageIndex = imageIndices[service.id] || 0;
+              const totalImages = service.images.length;
+              
+              return (
+                <article 
+                  key={service.id} 
+                  className={`bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-800 ease-out transform hover:-translate-y-2 ${
+                    isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
+                  }`}
+                  style={{ transitionDelay: `${0.5 + index * 0.2}s` }}
+                >
+                  <div className="relative h-48">
+                    <Image
+                      src={service.images[currentImageIndex]}
+                      alt={service.title}
+                      fill
+                      className="object-cover"
+                    />
+                    
+                    {/* Category Badge */}
+                    <div className="absolute top-4 left-4 z-10">
+                      <span className="bg-[#d11e0f] text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        {service.category}
+                      </span>
+                    </div>
+
+                    {/* Image Navigation for multiple images */}
+                    {totalImages > 1 && (
+                      <>
+                        {/* Image Counter */}
+                        <div className="absolute top-4 right-4 z-10">
+                          <span className="bg-black/50 text-white px-2 py-1 rounded text-xs font-semibold">
+                            {currentImageIndex + 1}/{totalImages}
+                          </span>
+                        </div>
+
+                        {/* Navigation Arrows */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            prevImage(service.id, totalImages);
+                          }}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-[#d11e0f] hover:text-white text-gray-700 p-2 rounded-full shadow transition-all duration-300 hover:scale-110 z-10"
+                          aria-label="Previous Image"
+                        >
+                          <ChevronLeftIcon className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            nextImage(service.id, totalImages);
+                          }}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-[#d11e0f] hover:text-white text-gray-700 p-2 rounded-full shadow transition-all duration-300 hover:scale-110 z-10"
+                          aria-label="Next Image"
+                        >
+                          <ChevronRightIcon className="w-4 h-4" />
+                        </button>
+
+                        {/* Image Dots Indicator */}
+                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-1 z-10">
+                          {service.images.map((_, dotIndex) => (
+                            <button
+                              key={dotIndex}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setImageIndices(prev => ({
+                                  ...prev,
+                                  [service.id]: dotIndex
+                                }));
+                              }}
+                              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                                dotIndex === currentImageIndex 
+                                  ? 'bg-white' 
+                                  : 'bg-white/50 hover:bg-white/75'
+                              }`}
+                              aria-label={`Go to image ${dotIndex + 1}`}
+                            />
+                          ))}
+                        </div>
+                      </>
                     )}
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">Miễn phí</span>
-                    <button 
+                  <div className="p-6">
+                    <h3 
+                      className="text-lg font-bold text-gray-800 mb-3 line-clamp-2 cursor-pointer hover:text-[#d11e0f] transition-colors"
                       onClick={() => router.push(`/services?zone=${service.id}`)}
-                      className="text-[#d11e0f] font-semibold hover:underline text-sm cursor-pointer"
                     >
-                      Xem chi tiết →
-                    </button>
+                      {service.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                      {service.description}
+                    </p>
+                    
+                    {/* Service Features */}
+                    <div className="space-y-2 mb-4">
+                      {service.features.slice(0, 2).map((feature, idx) => (
+                        <div key={`service-feature-${idx}`} className="flex items-start space-x-2">
+                          <div className="w-1.5 h-1.5 bg-[#d11e0f] rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="text-gray-600 text-xs line-clamp-1">{feature}</span>
+                        </div>
+                      ))}
+                      {service.features.length > 2 && (
+                        <div className="text-xs text-gray-500">
+                          +{service.features.length - 2} tiện ích khác
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500">Miễn phí</span>
+                      <button 
+                        onClick={() => router.push(`/services?zone=${service.id}`)}
+                        className="text-[#d11e0f] font-semibold hover:underline text-sm cursor-pointer"
+                      >
+                        Xem chi tiết →
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         </div>
 
