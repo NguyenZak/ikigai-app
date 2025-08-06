@@ -8,22 +8,28 @@ export async function GET(request: NextRequest) {
   try {
     // For development, allow access without auth
     if (process.env.NODE_ENV === 'development') {
-      // Continue with the request
-      //Log console.log('Development mode: Skipping authentication check');
       console.log('Development mode: Skipping authentication check');
     } else {
-      //Log
       console.log('Production mode: Validating session');
       const token = request.cookies.get('auth-token')?.value;
 
       if (!token) {
+        console.log('No auth token found');
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
 
       const user = await validateSession(token);
-      if (!user || user.role !== 'ADMIN') {
+      if (!user) {
+        console.log('Invalid session');
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+      
+      if (user.role !== 'ADMIN') {
+        console.log('User not admin:', user.role);
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
       }
+      
+      console.log('User authenticated:', user.email);
     }
 
     const banners = await prisma.banner.findMany({
@@ -62,18 +68,27 @@ export async function POST(request: NextRequest) {
   try {
     // For development, allow access without auth
     if (process.env.NODE_ENV === 'development') {
-      // Continue with the request
+      console.log('Development mode: Skipping authentication check');
     } else {
       const token = request.cookies.get('auth-token')?.value;
       
       if (!token) {
+        console.log('No auth token found');
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
 
       const user = await validateSession(token);
-      if (!user || user.role !== 'ADMIN') {
+      if (!user) {
+        console.log('Invalid session');
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+      
+      if (user.role !== 'ADMIN') {
+        console.log('User not admin:', user.role);
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
       }
+      
+      console.log('User authenticated:', user.email);
     }
 
     const body = await request.json();
